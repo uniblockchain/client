@@ -303,6 +303,16 @@ void ActivityWidget::slotBuildNotificationDisplay(const ActivityList &list)
                 }
             }
             _guiLoggedNotifications.insert(activity._id);
+
+            QStringList actions;
+            foreach (ActivityLink link, activity._links) {
+               actions << link._link << link._label;
+            }
+
+            if(!activity._link.isEmpty())
+                actions << activity._link.toString() << "More Information";
+
+            emit notify(activity._subject, activity._accName, actions);
         }
     }
 
@@ -516,6 +526,7 @@ ActivitySettings::ActivitySettings(QWidget *parent)
     connect(_activityWidget, &ActivityWidget::copyToClipboard, this, &ActivitySettings::slotCopyToClipboard);
     connect(_activityWidget, &ActivityWidget::hideActivityTab, this, &ActivitySettings::setActivityTabHidden);
     connect(_activityWidget, &ActivityWidget::guiLog, this, &ActivitySettings::guiLog);
+    connect(_activityWidget, &ActivityWidget::notify, this, &ActivitySettings::notify);
     connect(_activityWidget, &ActivityWidget::newNotification, this, &ActivitySettings::slotShowActivityTab);
 
     _protocolWidget = new ProtocolWidget(this);
