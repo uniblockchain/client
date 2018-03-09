@@ -53,7 +53,9 @@ void ServerNotificationHandler::slotFetchNotifications(AccountState *ptr)
     QObject::connect(_notificationJob.data(), &JsonApiJob::jsonReceived,
         this, &ServerNotificationHandler::slotNotificationsReceived);
     _notificationJob->setProperty("AccountStatePtr", QVariant::fromValue<AccountState *>(ptr));
-
+    QUrlQuery params;
+    params.addQueryItem("absolute", "true");
+    _notificationJob->addQueryParams(params);
     _notificationJob->start();
 }
 

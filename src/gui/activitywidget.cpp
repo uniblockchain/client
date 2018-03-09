@@ -315,15 +315,18 @@ void ActivityWidget::slotBuildNotificationDisplay(const ActivityList &list)
                        << link._label;
             }
 
-            if(!activity._link.isEmpty())
-                actions << (QStringList() << activity._accName
-                                          << QString::number(activity._id)
-                                          << activity._link.toString()
-                                          << "VIEW"
-                            ).join(",")
-                        << "More Information";
+            QString message;
+            if(!activity._link.isEmpty()){
+                QString url(activity._link.url());
+                if(activity._link.scheme().isEmpty() && activity._link.host().isEmpty()){
+                    activity._link.setScheme("http");
+                    activity._link.setHost("localhost");
+                    url = activity._link.url();
+                 }
+                message = QString("<a href=\"%1\">%2</a> | %3").arg(url, "More information", activity._accName);
+            }
 
-            emit notify(activity._subject, activity._accName, actions);
+            emit notify(activity._subject, message.toUtf8(), actions);
         }
     }
 
